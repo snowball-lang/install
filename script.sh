@@ -76,6 +76,12 @@ log() {
   fi >> $output
 }
 
+write_env_file() {
+    local env_file="$SNOWBALL_INSTALL_DIR/env.sh"
+    log info "Writing environment file to $env_file"
+    echo "export PATH=\"$SNOWBALL_INSTALL_DIR/bin:\$PATH\"" > "$env_file"
+}
+
 log info "Checking for valid operating system"
 
 if [ "$OS" != "linux" ] && [ "$OS" != "darwin" ]; then
@@ -119,14 +125,16 @@ x=$(curl -L https://github.com/snowball-lang/snowball/releases/latest/download/"
 
 mkdir bin
 mkdir lib
-ls
+
 mv snowball bin
 mv libSnowball.so lib
 
+write_env_file
+
 log info "Exporting snowball to PATH"
 
-EXPORT_COMMAND="$(pwd)/bin"
-log warn "PATH export command:"
+EXPORT_COMMAND="source $SNOWBALL_INSTALL_DIR/env.sh"
+log warn "Export command:"
 log warn "  $EXPORT_COMMAND"
 
 # function to check if a file exists and is writable
@@ -147,6 +155,7 @@ check_file_writable() {
 # function to add the command to the PATH in the config file
 add_command_to_path() {
     local config_file="$1"
+    local env_command=". $SNOWBALL_INSTALL_DIR/env.sh"
 
     if grep -q "$EXPORT_COMMAND" "$config_file"; then
         log warn "PATH already updated in $config_file; skipping update."
@@ -161,13 +170,13 @@ add_command_to_path() {
     if [[ "$add_to_path" == "y" ]]; then
         log info "Updating $config_file ..."
         echo "" >> "$config_file"
-        log info "executing \"export PATH=\"$EXPORT_COMMAND:\$PATH\"\""
-        echo "export PATH=\"$EXPORT_COMMAND:\$PATH\"" >> "$config_file"
+        echo "$env_command" >> "$config_file"
     else
         log warn "Skipping update of $config_file."
     fi
 
-    export PATH="$EXPORT_COMMAND:$PATH"
+    log info "executing \"$env_command\""
+    eval "$env_command"
 }
 
 # function to update the appropriate config file based on the shell
