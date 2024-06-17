@@ -112,11 +112,11 @@ log info "Creating target directory: $SNOWBALL_INSTALL_DIR"
 
 mkdir -p $SNOWBALL_INSTALL_DIR
 cd $SNOWBALL_INSTALL_DIR
-x=$(curl -L https://github.com/snowball-lang/snowball/releases/latest/download/"$SNOWBALL_BUILD_ARCHIVE" | tar zxvf - --strip-components=1)
+x=$(curl -L https://github.com/snowball-lang/snowball/releases/latest/download/"$SNOWBALL_BUILD_ARCHIVE" | tar zxvf - )
 
 mkdir bin
 mkdir lib
-
+ls
 mv snowball bin
 mv libSnowball.so lib
 
