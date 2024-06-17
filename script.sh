@@ -118,8 +118,6 @@ log info "Creating target directory: $SNOWBALL_INSTALL_DIR"
 
 mkdir -p $SNOWBALL_INSTALL_DIR
 
-sudo chown $USER:$USER $SNOWBALL_INSTALL_DIR
-
 cd $SNOWBALL_INSTALL_DIR
 x=$(curl -L https://github.com/snowball-lang/snowball/releases/latest/download/"$SNOWBALL_BUILD_ARCHIVE" | tar zxvf - )
 
